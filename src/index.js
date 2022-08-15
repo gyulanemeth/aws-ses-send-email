@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer'
 import aws from '@aws-sdk/client-ses'
 import createTextVersion from 'textversionjs'
 
-import { ValidationError } from 'standard-api-errors'
+import { ValidationError, InternalServerError } from 'standard-api-errors'
 
 /*
   Add the following to your .env file:
@@ -30,8 +30,13 @@ export default async ({ to, subject, html }) => {
         }
       })
     } else {
-      if (!process.env.FROM_EMAIL_ADDRESS || !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-        throw new ValidationError('Missing .env variables, FROM_EMAIL_ADDRESS, AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in needed')
+      if (!process.env.FROM_EMAIL_ADDRESS) {
+        throw new InternalServerError('Missing .env config variables, FROM_EMAIL_ADDRESS in needed')
+      }
+      if (!process.env.AWS_ACCESS_KEY_ID) {
+        throw new InternalServerError('Missing .env config variables, AWS_ACCESS_KEY_ID in needed')
+      } if (!process.env.AWS_SECRET_ACCESS_KEY) {
+        throw new InternalServerError('Missing .env config variables, AWS_SECRET_ACCESS_KEY in needed')
       }
       const sesClient = new aws.SESClient({
         region: 'us-east-1',
@@ -44,14 +49,15 @@ export default async ({ to, subject, html }) => {
         SES: { ses: sesClient, aws }
       })
     }
-
     const info = await transporter.sendMail({
       from: process.env.FROM_EMAIL_ADDRESS,
       to,
       subject,
       html,
       text: createTextVersion(html)
-    }).then(res => res)
+    }).then(res => res).catch(error => {
+      throw new InternalServerError(`Email sending error: ${error.message}`)
+    })
     return {
       status: 200,
       result: {
