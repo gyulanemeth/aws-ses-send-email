@@ -28,4 +28,13 @@ describe('Email testing', () => {
     const res = await sendEmail({ to: 'example@example.com', subject: 'send Email TEST ', html: '<h1>Email send successfully </h1>' })
     expect(res.status).toBe(500)
   })
+
+  test('Send Email internal server error missing environment variable ', async () => {
+    global.process.env = {
+      FROM_EMAIL_ADDRESS: 'emailTest',
+      AWS_SECRET_ACCESS_KEY: 'AwsSecretAccessKeyTest'
+    }
+    const res = await sendEmail({ to: 'example@example.com', subject: 'send Email TEST ', html: '<h1>Email send successfully </h1>' })
+    expect(res.status).toBe(500)
+  })
 })

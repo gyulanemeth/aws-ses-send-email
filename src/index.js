@@ -14,7 +14,7 @@ import { ValidationError, InternalServerError } from 'standard-api-errors'
 export default async ({ to, subject, html }) => {
   try {
     if (!to || !subject || !html) {
-      throw new ValidationError('Missing params, to, subject and html is needed')
+      throw new ValidationError('Missing params: to, subject and html are required.')
     }
     let transporter
     /* istanbul ignore else */
@@ -31,12 +31,13 @@ export default async ({ to, subject, html }) => {
       })
     } else {
       if (!process.env.FROM_EMAIL_ADDRESS) {
-        throw new InternalServerError('Missing .env config variables, FROM_EMAIL_ADDRESS in needed')
+        throw new InternalServerError('Missing environment variable: FROM_EMAIL_ADDRESS')
       }
       if (!process.env.AWS_ACCESS_KEY_ID) {
-        throw new InternalServerError('Missing .env config variables, AWS_ACCESS_KEY_ID in needed')
-      } if (!process.env.AWS_SECRET_ACCESS_KEY) {
-        throw new InternalServerError('Missing .env config variables, AWS_SECRET_ACCESS_KEY in needed')
+        throw new InternalServerError('Missing environment variable: AWS_ACCESS_KEY_ID')
+      }
+      if (!process.env.AWS_SECRET_ACCESS_KEY) {
+        throw new InternalServerError('Missing environment variable: AWS_SECRET_ACCESS_KEY')
       }
       const sesClient = new aws.SESClient({
         region: 'us-east-1',
@@ -55,8 +56,6 @@ export default async ({ to, subject, html }) => {
       subject,
       html,
       text: createTextVersion(html)
-    }).then(res => res).catch(error => {
-      throw new InternalServerError(`Email sending error: ${error.message}`)
     })
     return {
       status: 200,
@@ -65,6 +64,9 @@ export default async ({ to, subject, html }) => {
       }
     }
   } catch (err) {
+    if (err.name !== 'VALIDATION_ERROR' && err.name !== 'INTERNAL_SERVER_ERROR') {
+      return new InternalServerError(`Email sending error: ${err.message}`)
+    }
     return err
   }
 }
