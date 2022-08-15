@@ -14,7 +14,7 @@ describe('Email testing', () => {
     expect(found).toBe('Email send successfully')
   })
 
-  test('Send Email without to email Validation error', async () => {
+  test('Send Email Validation error missing params', async () => {
     const res = await sendEmail({ subject: 'send Email TEST', html: '<h1>Should Not Be Sent </h1>' })
     expect(res.status).toBe(400)
   })
