@@ -33,8 +33,6 @@
     "type": "git",
     "url": "git+https://github.com/gyulanemeth/aws-ses-send-email.git"
   },
-  "author": "GYN",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/gyulanemeth/aws-ses-send-email/issues"
   },
@@ -49,5 +47,7 @@
     "jest": "^27.5.1",
     "node-fetch": "^3.2.10",
     "standard": "^16.0.4"
-  }
+  },
+  "author": "GYN",
+  "license": "MIT"
 }
