@@ -15,8 +15,7 @@ describe('Email testing', () => {
   })
 
   test('Send Email Validation error missing params', async () => {
-    const res = await sendEmail({ subject: 'send Email TEST', html: '<h1>Should Not Be Sent </h1>' })
-    expect(res.status).toBe(400)
+    await expect(sendEmail({ subject: 'send Email TEST', html: '<h1>Should Not Be Sent </h1>' })).rejects.toThrowError('Missing params: to, subject and html are required.')
   })
 
   test('Send Email internal server error ', async () => {
@@ -25,8 +24,7 @@ describe('Email testing', () => {
       AWS_ACCESS_KEY_ID: 'AwsAccessKeyIdTest',
       AWS_SECRET_ACCESS_KEY: 'AwsSecretAccessKeyTest'
     }
-    const res = await sendEmail({ to: 'example@example.com', subject: 'send Email TEST ', html: '<h1>Email send successfully </h1>' })
-    expect(res.status).toBe(500)
+    await expect(sendEmail({ to: 'example@example.com', subject: 'send Email TEST ', html: '<h1>Email send successfully </h1>' })).rejects.toThrowError('Email sending error: The security token included in the request is invalid.')
   })
 
   test('Send Email internal server error missing environment variable ', async () => {
@@ -34,7 +32,6 @@ describe('Email testing', () => {
       FROM_EMAIL_ADDRESS: 'emailTest',
       AWS_SECRET_ACCESS_KEY: 'AwsSecretAccessKeyTest'
     }
-    const res = await sendEmail({ to: 'example@example.com', subject: 'send Email TEST ', html: '<h1>Email send successfully </h1>' })
-    expect(res.status).toBe(500)
+    await expect(sendEmail({ to: 'example@example.com', subject: 'send Email TEST ', html: '<h1>Email send successfully </h1>' })).rejects.toThrowError('Missing environment variable: AWS_ACCESS_KEY_ID')
   })
 })
