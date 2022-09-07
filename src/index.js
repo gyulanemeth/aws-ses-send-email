@@ -65,8 +65,8 @@ export default async ({ to, subject, html }) => {
     }
   } catch (err) {
     if (err.name !== 'VALIDATION_ERROR' && err.name !== 'INTERNAL_SERVER_ERROR') {
-      return new InternalServerError(`Email sending error: ${err.message}`)
+      throw new InternalServerError(`Email sending error: ${err.message}`)
     }
-    return err
+    throw err
   }
 }
