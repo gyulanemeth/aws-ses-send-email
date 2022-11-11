@@ -11,7 +11,7 @@ import { ValidationError, InternalServerError } from 'standard-api-errors'
     AWS_SECRET_ACCESS_KEY
 */
 
-export default async ({ to, subject, html }) => {
+export default async ({ to, subject, html, fromEmailAddress, awsSecretAccessKey, awsAccessKeyId }) => {
   try {
     if (!to || !subject || !html) {
       throw new ValidationError('Missing params: to, subject and html are required.')
@@ -30,20 +30,20 @@ export default async ({ to, subject, html }) => {
         }
       })
     } else {
-      if (!process.env.FROM_EMAIL_ADDRESS) {
+      if (!fromEmailAddress && !process.env.FROM_EMAIL_ADDRESS) {
         throw new InternalServerError('Missing environment variable: FROM_EMAIL_ADDRESS')
       }
-      if (!process.env.AWS_ACCESS_KEY_ID) {
+      if (!awsAccessKeyId && !process.env.AWS_ACCESS_KEY_ID) {
         throw new InternalServerError('Missing environment variable: AWS_ACCESS_KEY_ID')
       }
-      if (!process.env.AWS_SECRET_ACCESS_KEY) {
+      if (!awsSecretAccessKey && !process.env.AWS_SECRET_ACCESS_KEY) {
         throw new InternalServerError('Missing environment variable: AWS_SECRET_ACCESS_KEY')
       }
       const sesClient = new aws.SESClient({
         region: 'us-east-1',
         credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+          accessKeyId: awsAccessKeyId || process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: awsSecretAccessKey || process.env.AWS_SECRET_ACCESS_KEY
         }
       })
       transporter = nodemailer.createTransport({
