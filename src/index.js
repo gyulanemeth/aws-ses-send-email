@@ -9,6 +9,7 @@ import { ValidationError, InternalServerError } from 'standard-api-errors'
     FROM_EMAIL_ADDRESS
     AWS_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY
+    AWS_REGION
 */
 
 export default async ({ to, subject, html, fromEmailAddress, awsSecretAccessKey, awsAccessKeyId, region }) => {
