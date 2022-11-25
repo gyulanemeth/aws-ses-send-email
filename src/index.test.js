@@ -22,7 +22,8 @@ describe('Email testing', () => {
     global.process.env = {
       FROM_EMAIL_ADDRESS: 'emailTest',
       AWS_ACCESS_KEY_ID: 'AwsAccessKeyIdTest',
-      AWS_SECRET_ACCESS_KEY: 'AwsSecretAccessKeyTest'
+      AWS_SECRET_ACCESS_KEY: 'AwsSecretAccessKeyTest',
+      AWS_REGION: 'us-east-1'
     }
     await expect(sendEmail({ to: 'example@example.com', subject: 'send Email TEST ', html: '<h1>Email send successfully </h1>' })).rejects.toThrowError('Email sending error: The security token included in the request is invalid.')
   })
