@@ -12,7 +12,7 @@ import { ValidationError, InternalServerError } from 'standard-api-errors'
     AWS_REGION
 */
 
-export default async ({ to, subject, html, fromEmailAddress, awsSecretAccessKey, awsAccessKeyId, region }) => {
+export default async ({ to, subject, html, from, awsSecretAccessKey, awsAccessKeyId, region }) => {
   try {
     if (!to || !subject || !html) {
       throw new ValidationError('Missing params: to, subject and html are required.')
@@ -31,7 +31,7 @@ export default async ({ to, subject, html, fromEmailAddress, awsSecretAccessKey,
         }
       })
     } else {
-      if (!fromEmailAddress && !process.env.FROM_EMAIL_ADDRESS) {
+      if (!from && !process.env.FROM_EMAIL_ADDRESS) {
         throw new InternalServerError('Missing environment variable: FROM_EMAIL_ADDRESS')
       }
       if (!awsAccessKeyId && !process.env.AWS_ACCESS_KEY_ID) {
@@ -55,7 +55,7 @@ export default async ({ to, subject, html, fromEmailAddress, awsSecretAccessKey,
       })
     }
     const info = await transporter.sendMail({
-      from: fromEmailAddress || process.env.FROM_EMAIL_ADDRESS,
+      from: from || process.env.FROM_EMAIL_ADDRESS,
       to,
       subject,
       html,
