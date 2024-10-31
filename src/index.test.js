@@ -14,6 +14,17 @@ describe('Email testing', () => {
     expect(found).toBe('Email send successfully')
   })
 
+  test('success Send Email with replyTo address ', async () => {
+    const res = await sendEmail({ to: 'example@example.com', from: 'test@test.com', subject: 'send Email TEST ', html: '<h1>Email send successfully </h1>', replyTo: 'reply-to@test.com' })
+    expect(res.status).toBe(200)
+
+    const messageUrl = nodemailer.getTestMessageUrl(res.result.info)
+    const html = await fetch(messageUrl).then(response => response.text())
+    const regex = /Email send successfully/g
+    const found = html.match(regex)[0]
+    expect(found).toBe('Email send successfully')
+  })
+
   test('Send Email Validation error missing params', async () => {
     await expect(sendEmail({ subject: 'send Email TEST', html: '<h1>Should Not Be Sent </h1>' })).rejects.toThrowError('Missing params: to, subject and html are required.')
   })
