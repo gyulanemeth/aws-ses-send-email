@@ -12,7 +12,7 @@ import { ValidationError, InternalServerError } from 'standard-api-errors'
     AWS_REGION
 */
 
-export default async ({ to, subject, html, from, replyTo, attachments, awsSecretAccessKey, awsAccessKeyId, region }) => {
+export default async ({ to, subject, html, from, replyTo, attachments, awsSecretAccessKey, awsAccessKeyId, region, headers  }) => {
   try {
     if (!to || !subject || !html) {
       throw new ValidationError('Missing params: to, subject and html are required.')
@@ -61,6 +61,7 @@ export default async ({ to, subject, html, from, replyTo, attachments, awsSecret
       html,
       replyTo,
       attachments,
+      headers,
       text: createTextVersion(html)
     })
     return {
