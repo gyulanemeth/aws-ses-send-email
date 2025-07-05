@@ -81,5 +81,3 @@ export default async ({ to, subject, html, from, replyTo, attachments, awsSecret
     throw err
   }
 }
-
-export { getAssumedCredentials }

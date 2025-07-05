@@ -1,6 +1,6 @@
 import { vi, describe, test, expect } from 'vitest'
 import nodemailer from 'nodemailer'
-import sendEmail, { getAssumedCredentials } from './index.js'
+import sendEmail from './index.js'
 import fetch from 'node-fetch'
 
 describe('Email testing', () => {
