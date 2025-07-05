@@ -47,7 +47,7 @@ async function getAssumedCredentials ({ roleArn, region, assumeRoleDurationSecon
   }
 }
 
-export default async ({ to, subject, html, from, replyTo, attachments, awsSecretAccessKey, awsAccessKeyId, awsSessionToken, region, headers, STS = false }) => {
+export default async ({ to, subject, html, from, replyTo, attachments, awsSecretAccessKey, awsAccessKeyId, awsSessionToken, region, headers }) => {
   try {
     if (!to || !subject || !html) {
       throw new ValidationError('Missing params: to, subject and html are required.')
@@ -77,9 +77,6 @@ export default async ({ to, subject, html, from, replyTo, attachments, awsSecret
       }
       if (!region && !process.env.AWS_REGION) {
         throw new InternalServerError('Missing environment variable: AWS_REGION')
-      }
-      if (STS && !awsSessionToken) {
-        throw new InternalServerError('Missing variable: awsSessionToken')
       }
       const credentials = {
         accessKeyId: awsAccessKeyId || process.env.AWS_ACCESS_KEY_ID,
