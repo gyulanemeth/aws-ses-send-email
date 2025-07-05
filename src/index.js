@@ -18,6 +18,7 @@ export default async ({ to, subject, html, from, replyTo, attachments, awsSecret
       throw new ValidationError('Missing params: to, subject and html are required.')
     }
     let transporter
+    /* istanbul ignore else */
     if (process.env.NODE_ENV === 'test') {
       const testAccount = await nodemailer.createTestAccount()
       transporter = await nodemailer.createTransport({
@@ -29,7 +30,6 @@ export default async ({ to, subject, html, from, replyTo, attachments, awsSecret
           pass: testAccount.pass
         }
       })
-      /* c8 ignore next 30 */
     } else {
       if (!from && !process.env.FROM_EMAIL_ADDRESS) {
         throw new InternalServerError('Missing environment variable: FROM_EMAIL_ADDRESS')
