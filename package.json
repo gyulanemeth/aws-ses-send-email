@@ -1,6 +1,6 @@
 {
   "name": "aws-ses-send-email",
-  "version": "1.0.0",
+  "version": "0.0.9",
   "description": "",
   "type": "module",
   "main": "src/index.js",
