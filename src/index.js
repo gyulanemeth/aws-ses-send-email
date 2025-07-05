@@ -85,7 +85,7 @@ export default async ({ to, subject, html, from, replyTo, attachments, awsSecret
         accessKeyId: awsAccessKeyId || process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: awsSecretAccessKey || process.env.AWS_SECRET_ACCESS_KEY
       }
-      if (STS) {
+      if (awsSessionToken) {
         credentials.sessionToken = awsSessionToken
       }
       const sesClient = new aws.SESClient({
