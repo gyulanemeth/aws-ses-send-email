@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer'
 import aws from '@aws-sdk/client-ses'
-import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts'
 import createTextVersion from 'textversionjs'
 
 import { ValidationError, InternalServerError } from 'standard-api-errors'
@@ -12,40 +11,6 @@ import { ValidationError, InternalServerError } from 'standard-api-errors'
     AWS_SECRET_ACCESS_KEY
     AWS_REGION
 */
-
-async function getAssumedCredentials ({ roleArn, region, assumeRoleDurationSeconds, assumeRoleSessionName }) {
-  if (!roleArn) {
-    throw new InternalServerError('Missing variable: roleArn')
-  }
-  if (!process.env.AWS_ACCESS_KEY_ID) {
-    throw new InternalServerError('Missing environment variable: AWS_ACCESS_KEY_ID')
-  }
-  if (!process.env.AWS_SECRET_ACCESS_KEY) {
-    throw new InternalServerError('Missing environment variable: AWS_SECRET_ACCESS_KEY')
-  }
-  if (!region) {
-    throw new InternalServerError('Missing variable: region')
-  }
-
-  const sts = new STSClient({
-    region,
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-    }
-  })
-  const command = new AssumeRoleCommand({
-    RoleArn: roleArn,
-    RoleSessionName: assumeRoleSessionName || 'ses-session',
-    DurationSeconds: assumeRoleDurationSeconds || 3600
-  })
-  const assumed = await sts.send(command)
-  return {
-    accessKeyId: assumed.Credentials.AccessKeyId,
-    secretAccessKey: assumed.Credentials.SecretAccessKey,
-    sessionToken: assumed.Credentials.SessionToken
-  }
-}
 
 export default async ({ to, subject, html, from, replyTo, attachments, awsSecretAccessKey, awsAccessKeyId, awsSessionToken, region, headers }) => {
   try {
