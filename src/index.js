@@ -12,7 +12,7 @@ import { ValidationError, InternalServerError } from 'standard-api-errors'
     AWS_REGION
 */
 
-export default async ({ to, subject, html, from, replyTo, attachments, awsSecretAccessKey, awsAccessKeyId, region, headers }) => {
+export default async ({ to, subject, html, from, replyTo, attachments, awsSecretAccessKey, awsAccessKeyId, awsSessionToken, region, headers }) => {
   try {
     if (!to || !subject || !html) {
       throw new ValidationError('Missing params: to, subject and html are required.')
@@ -43,12 +43,16 @@ export default async ({ to, subject, html, from, replyTo, attachments, awsSecret
       if (!region && !process.env.AWS_REGION) {
         throw new InternalServerError('Missing environment variable: AWS_REGION')
       }
+      const credentials = {
+        accessKeyId: awsAccessKeyId || process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: awsSecretAccessKey || process.env.AWS_SECRET_ACCESS_KEY
+      }
+      if (awsSessionToken) {
+        credentials.sessionToken = awsSessionToken
+      }
       const sesClient = new aws.SESClient({
         region: region || process.env.AWS_REGION,
-        credentials: {
-          accessKeyId: awsAccessKeyId || process.env.AWS_ACCESS_KEY_ID,
-          secretAccessKey: awsSecretAccessKey || process.env.AWS_SECRET_ACCESS_KEY
-        }
+        credentials
       })
       transporter = nodemailer.createTransport({
         SES: { ses: sesClient, aws }
