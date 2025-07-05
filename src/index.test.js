@@ -1,11 +1,8 @@
-import { vi, describe, test, expect } from 'vitest'
 import nodemailer from 'nodemailer'
 import sendEmail from './index.js'
 import fetch from 'node-fetch'
 
 describe('Email testing', () => {
-  vi.mock('@aws-sdk/client-sts')
-
   test('success Send Email ', async () => {
     const res = await sendEmail({ to: 'example@example.com', subject: 'send Email TEST ', html: '<h1>Email send successfully </h1>' })
     expect(res.status).toBe(200)
